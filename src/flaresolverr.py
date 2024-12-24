@@ -67,7 +67,9 @@ def content():
     data = request.json
 
     if not data:
-        return {'error': 'Invalid or missing JSON'}
+        response = HTTPResponse(status=400, body={'error': 'Invalid or missing JSON'})
+
+        return response
     
     target_url = data.get('url')
     user_agent = data.get('user_agent')
