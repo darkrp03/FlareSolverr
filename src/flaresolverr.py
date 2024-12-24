@@ -99,6 +99,11 @@ def content():
         # Make the request to the target URL
         external_response = requests.get(target_url, headers=headers)
 
+        if (external_response.status_code == 403):
+            response = HTTPResponse(status=403, body={'error': 'Blocked by Cloudflare'})
+
+            return response
+
         # Return the response from the external API
         return {
             "message": "Request forwarded successfully",
