@@ -1,0 +1,17 @@
+---
+services:
+  flaresolverr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=Europe/London
+      - DRIVER=${DRIVER:-nodriver}
+    ports:
+      - "${PORT:-8191}:8191"
+    working_dir: /app
+    volumes:
+      - ./src:/app:Z
