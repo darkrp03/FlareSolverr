@@ -99,9 +99,6 @@ def content():
         # Make the request to the target URL
         external_response = requests.get(target_url, headers=headers)
 
-        # Set the response content type to JSON
-        response.content_type = 'application/json'
-
         # Return the response from the external API
         return {
             "message": "Request forwarded successfully",
