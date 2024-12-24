@@ -6,7 +6,7 @@ import asyncio
 import requests
 
 import certifi
-from bottle import run, response, Bottle, request, ServerAdapter
+from bottle import run, response, Bottle, request, ServerAdapter, HTTPResponse
 
 from bottle_plugins.error_plugin import error_plugin
 from bottle_plugins.logger_plugin import logger_plugin
@@ -62,22 +62,35 @@ def controller_v1():
         response.status = 500
     return utils.object_to_dict(res)
 
-@app.get('/content')
+@app.post('/content')
 def content():
-    target_url = request.query.get('url')
+    data = request.json
+
+    if not data:
+        return {'error': 'Invalid or missing JSON'}
     
+    target_url = data.get('url')
+    user_agent = data.get('user_agent')
+    cookie = data.get('cookie')
+
     if not target_url:
-        response.status = 400
-        return {"error": "Missing 'url' in query parameters."}
+        response = HTTPResponse(status=400, body={'error': 'Invalid or missing url property'})
 
-    # Get the User-Agent and Cookie from the incoming request headers
-    user_agent = request.headers.get('User-Agent', 'Unknown')
-    cookie = request.headers.get('Cookie', '')
+        return response
 
-    # Forward these headers in the new request
+    if not user_agent:
+        response = HTTPResponse(status=400, body={'error': 'Invalid or missing user_agent property'})
+
+        return response
+
+    if not cookie:
+        response = HTTPResponse(status=400, body={'error': 'Invalid or missing cookie property'})
+
+        return response
+
     headers = {
-        "User-Agent": user_agent,
-        "Cookie": cookie
+        'User-Agent': user_agent,
+        'Cookie': cookie
     }
 
     try:
